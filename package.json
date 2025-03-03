@@ -6,9 +6,10 @@
   "scripts": {
     "start": "node server.js",
     "test": "jest --detectOpenHandles",
-    "seed": "node add_products.sh",
-    "get": "node get_products.sh",
-    "dev": "nodemon server.js"
+    "seed": "chmod +x delete_products.sh && ./delete_products.sh && chmod +x add_products.sh && ./add_products.sh",
+    "get": "chmod +x get_products.sh && ./get_products.sh",
+    "dev": "nodemon server.js",
+    "delete": "chmod +x delete_products.sh && ./delete_products.sh"
   },
   "keywords": [],
   "author": "",
