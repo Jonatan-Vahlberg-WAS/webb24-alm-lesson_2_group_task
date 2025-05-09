@@ -96,7 +96,7 @@ describe("Product Model Test Suite", () => {
         { new: true }
       );
 
-      expect(product.name).toBe(updatedName);
+      expect(updatedProduct.name).toBe(updatedName);
     });
 
     test("should handle concurrent updates correctly", async () => {
