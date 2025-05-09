@@ -82,7 +82,7 @@ describe("Product Model Test Suite", () => {
 
       const foundProduct = await Product.findById(savedProduct._id);
       expect(foundProduct).toBeDefined();
-      expect(foundProduct).toBe(savedProduct);
+      expect(foundProduct.toObject()).toEqual(savedProduct.toObject());
     });
 
     test("should update product successfully", async () => {
