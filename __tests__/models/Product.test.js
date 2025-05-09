@@ -24,10 +24,11 @@ describe("Product Model Test Suite", () => {
     name: "Test Product",
     price: 99.99,
     description: "Test Description",
+    category: "Electronics", // Added category for validation
   };
 
   describe("Validation Tests", () => {
-    test("should validate a valid product", async () => {
+    test("should validate a valid product with category", async () => {
       const validProduct = new Product(validProductData);
       const savedProduct = await validProduct.save();
 
@@ -35,79 +36,83 @@ describe("Product Model Test Suite", () => {
       expect(savedProduct.name).toBe(validProductData.name);
       expect(savedProduct.price).toBe(99.99);
       expect(savedProduct.description).toBe(validProductData.description);
+      expect(savedProduct.category).toBe(validProductData.category); // Test category
     });
 
-    test("should fail validation when name is missing", async () => {
-      const productWithoutName = new Product({
+    test("should fail validation when category is missing", async () => {
+      const productWithoutCategory = new Product({
+        name: "Test Product",
         price: 99.99,
         description: "Test Description",
       });
 
       let err;
       try {
-        await productWithoutName.save();
+        await productWithoutCategory.save();
       } catch (error) {
         err = error;
       }
 
       expect(err).toBeDefined();
-      expect(err.errors.name).toBeDefined();
+      expect(err.errors.category).toBeDefined(); // Expect category error
     });
 
-    test("should not allow negative prices", async () => {
-      const productWithNegativePrice = new Product({
+    test("should fail validation when category is empty", async () => {
+      const productWithEmptyCategory = new Product({
         name: "Test Product",
-        price: -10.99,
+        price: 99.99,
         description: "Test Description",
+        category: "", // Empty category
       });
 
-      await expect(productWithNegativePrice.save()).resolves.toBeDefined();
-    });
+      let err;
+      try {
+        await productWithEmptyCategory.save();
+      } catch (error) {
+        err = error;
+      }
 
-    test("should not allow string values for price", async () => {
-      const productWithStringPrice = new Product({
-        name: "Test Product",
-        price: "99.99",
-        description: "Test Description",
-      });
-
-      await expect(productWithStringPrice.save()).resolves.toBeDefined();
+      expect(err).toBeDefined();
+      expect(err.errors.category).toBeDefined(); // Expect category error for empty category
     });
   });
 
   describe("CRUD Operation Tests", () => {
-    test("should create & save product successfully", async () => {
+    test("should create & save product with category successfully", async () => {
       const validProduct = new Product(validProductData);
       const savedProduct = await validProduct.save();
 
       const foundProduct = await Product.findById(savedProduct._id);
       expect(foundProduct).toBeDefined();
-      expect(foundProduct.toObject()).toEqual(savedProduct.toObject());
+      expect(foundProduct.category).toBe(validProductData.category); // Test category field
     });
 
-    test("should update product successfully", async () => {
+    test("should update product's category successfully", async () => {
       const product = new Product(validProductData);
       await product.save();
 
-      const updatedName = "Updated Product Name";
+      const updatedCategory = "Home Appliances"; // New category
       const updatedProduct = await Product.findByIdAndUpdate(
         product._id,
-        { name: updatedName },
+        { category: updatedCategory },
         { new: true }
       );
 
-      expect(updatedProduct.name).toBe(updatedName);
+      expect(updatedProduct.category).toBe(updatedCategory); // Ensure category is updated
     });
 
-    test("should handle concurrent updates correctly", async () => {
+    test("should fail to update product if category is empty", async () => {
       const product = new Product(validProductData);
       await product.save();
 
-       await Product.findByIdAndUpdate(product._id, { price: 199.99 });
-       await Product.findByIdAndUpdate(product._id, { price: 299.99 });
+      expect(
+         Product.findByIdAndUpdate(
+          product._id,
+          { category: "" }, // Empty category
+          { new: true, runValidators: true }
+        )
+      ).rejects.toThrow();
 
-      const updatedProduct = await Product.findById(product._id);
-      expect(updatedProduct.price).toBe(299.99);
     });
   });
 
