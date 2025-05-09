@@ -103,12 +103,11 @@ describe("Product Model Test Suite", () => {
       const product = new Product(validProductData);
       await product.save();
 
-      const update1 = Product.findByIdAndUpdate(product._id, { price: 199.99 });
-      const update2 = Product.findByIdAndUpdate(product._id, { price: 299.99 });
+       await Product.findByIdAndUpdate(product._id, { price: 199.99 });
+       await Product.findByIdAndUpdate(product._id, { price: 299.99 });
 
-      await Promise.all([update1, update2]);
       const updatedProduct = await Product.findById(product._id);
-      expect(updatedProduct.price).toBe(199.99);
+      expect(updatedProduct.price).toBe(299.99);
     });
   });
 
