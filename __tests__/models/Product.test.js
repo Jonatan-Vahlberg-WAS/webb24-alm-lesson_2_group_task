@@ -51,7 +51,7 @@ describe("Product Model Test Suite", () => {
       }
 
       expect(err).toBeDefined();
-      expect(err.errors.wrongField).toBeDefined();
+      expect(err.errors.name).toBeDefined();
     });
 
     test("should not allow negative prices", async () => {
