@@ -4,10 +4,19 @@ const Product = require("../models/Product");
 
 // GET all products
 router.get("/", async (req, res) => {
+  const { q } = req.query;
+  let products;
   try {
-    const products = await Product.find();
+    if (q) {
+      products = await Product.find({
+        $text: { $search: q, $caseSensitive: false },
+      });
+    } else {
+      products = await Product.find();
+    }
     res.json(products);
   } catch (error) {
+    console.warn("Error fetching products", error);
     res.status(500).json({ error: "Error fetching products" });
   }
 });
