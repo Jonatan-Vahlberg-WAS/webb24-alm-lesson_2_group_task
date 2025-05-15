@@ -1,4 +1,4 @@
-name: CI tests
+name: Main tests
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 'lts/*'
 
       - name: Install dependencies
         run: npm install
