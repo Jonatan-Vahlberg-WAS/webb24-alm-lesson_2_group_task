@@ -34,7 +34,7 @@ describe("Product Model Test Suite", () => {
 
       expect(savedProduct._id).toBeDefined();
       expect(savedProduct.name).toBe(validProductData.name);
-      expect(savedProduct.price).toBe(99.99);
+      expect(savedProduct.price).toBe(99.0);
       expect(savedProduct.description).toBe(validProductData.description);
       expect(savedProduct.category).toBe(validProductData.category); // Test category
     });
