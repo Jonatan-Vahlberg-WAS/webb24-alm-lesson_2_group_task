@@ -116,6 +116,32 @@ describe("Product Model Test Suite", () => {
     });
   });
 
+  describe("Search Functionality Tests", () => {
+    test("should find product by text search (name)", async () => {
+      const product = new Product(validProductData);
+      const savedProduct = await product.save();
+  
+      const results = await Product.find({ $text: { $search: "Test" } });
+  
+      expect(results.length).toBeGreaterThan(0);
+      expect(results[0]._id.toString()).toBe(savedProduct._id.toString());
+      expect(results[0].name).toBe("Test Product");
+    });
+
+    test("should find product within price range", async () => {
+      const product = new Product(validProductData);
+      const savedProduct = await product.save();
+    
+      const results = await Product.find({
+        price: { $gte: 90, $lte: 100 }
+      });
+    
+      expect(results.length).toBe(1);
+      expect(results[0]._id.toString()).toBe(savedProduct._id.toString());
+    });
+    
+  });
+  
   describe("Timestamp Tests", () => {
     test("should have createdAt and updatedAt timestamps", async () => {
       const product = new Product(validProductData);
