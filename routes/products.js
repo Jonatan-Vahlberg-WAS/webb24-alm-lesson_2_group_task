@@ -2,24 +2,31 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
 
-// GET all products
+
+//GET products with search and price filter
+
 router.get("/", async (req, res) => {
-  const { q } = req.query;
-  let products;
-  try {
-    if (q) {
-      products = await Product.find({
-        $text: { $search: q, $caseSensitive: false },
-      });
-    } else {
-      products = await Product.find();
-    }
-    res.json(products);
-  } catch (error) {
-    console.warn("Error fetching products", error);
-    res.status(500).json({ error: "Error fetching products" });
+  const { q, minPrice, maxPrice } = req.query;
+  let query = {}; 
+
+  if (q) {
+    query.$text = { $search: q }
   }
-});
+
+  if (minPrice || maxPrice) {
+    query.price = {}
+    if (minPrice) query.price.$gte = parseFloat(minPrice)
+    if (maxPrice) query.price.$lte = parseFloat(maxPrice)
+  }
+
+  try {
+    const products = await Product.find(query)
+    res.json(products)
+  } catch (error) {
+    res.status(500).json({error: "error fetching products"})
+  }
+})
+
 // GET products by category
 router.get("/category/:category", async (req, res) => {
   try {
